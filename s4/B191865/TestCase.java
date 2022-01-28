@@ -35,6 +35,8 @@ public class TestCase {
     static boolean success = true;
 
     public static void main(String[] args) {
+
+        // Test Frequencer.java
         try {
             FrequencerInterface  myObject;
             int freq;
@@ -90,7 +92,7 @@ public class TestCase {
             freq = myObject.frequency();
             assert freq == 0: "ababab, c: " + freq;
 
-            System.out.println("Done testing with test cases");
+            System.out.println("checking Frequencer OK");
 
         }
         catch(Exception e) {
@@ -98,29 +100,66 @@ public class TestCase {
             success = false;
         }
 
+        // Test InformationEstimator.java
         try {
             InformationEstimatorInterface myObject;
             double value;
             System.out.println("checking InformationEstimator");
+
             myObject = new InformationEstimator();
             myObject.setSpace("3210321001230123".getBytes());
             myObject.setTarget("0".getBytes());
             value = myObject.estimation();
             assert (value > 1.9999) && (2.0001 >value): "IQ for 0 in 3210321001230123 should be 2.0. But it returns "+value;
+
             myObject.setTarget("01".getBytes());
             value = myObject.estimation();
             assert (value > 2.9999) && (3.0001 >value): "IQ for 01 in 3210321001230123 should be 3.0. But it returns "+value;
+
             myObject.setTarget("0123".getBytes());
             value = myObject.estimation();
             assert (value > 2.9999) && (3.0001 >value): "IQ for 0123 in 3210321001230123 should be 3.0. But it returns "+value;
+
             myObject.setTarget("00".getBytes());
             value = myObject.estimation();
-            assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
+            assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 4.0. But it returns "+value;
+
+            // target length is 0
+            myObject = new InformationEstimator();
+            myObject.setSpace("3210321001230123".getBytes());
+            myObject.setTarget("".getBytes());
+            value = myObject.estimation();
+            assert (value > -0.0001) && (0.0001 >value): "IQ for '' in 3210321001230123 should be 0.0. But it returns "+value;
+
+            // target is not set
+            myObject = new InformationEstimator();
+            myObject.setSpace("3210321001230123".getBytes());
+            myObject.setTarget(null);
+            value = myObject.estimation();
+            assert (value > -0.0001) && (0.0001 >value): "IQ for null target in 3210321001230123 should be 0.0. But it returns "+value;
+
+            // space length is 0
+            myObject = new InformationEstimator();
+            myObject.setSpace("".getBytes());
+            myObject.setTarget("0123".getBytes());
+            value = myObject.estimation();
+            assert (value == Double.MAX_VALUE): "IQ for 0123 in '' space should be Double.MAX_VALUE. But it returns "+value;
+
+            // space is not set
+            myObject = new InformationEstimator();
+            myObject.setSpace(null);
+            myObject.setTarget("0123".getBytes());
+            value = myObject.estimation();
+            assert (value == Double.MAX_VALUE): "IQ for 0123 in null space should be Double.MAX_VALUE. But it returns "+value;
+
+            System.out.println("checking InformationEstimator OK");
         }
         catch(Exception e) {
             System.out.println("Exception occurred in InformationEstimator Object");
             success = false;
         }
+
         if(success) { System.out.println("TestCase OK"); }
+
     }
 }
