@@ -240,13 +240,6 @@ public class Frequencer implements FrequencerInterface {
             target_j_k[x - j] = myTarget[x];
         }
 
-        // target_j_kのほうが大きければ return -1
-        // HHH → HH などの同じ文字列が続くときに対応
-        // B213316様のレポジトリを参考
-        if (suffix_i.length < target_j_k.length) {
-            return -1;
-        }
-
         // headから順に比較する
         int min = Math.min(suffix_i.length, target_j_k.length);
         for (int x = 0; x < min; x++) {
@@ -255,6 +248,13 @@ public class Frequencer implements FrequencerInterface {
             } else if (suffix_i[x] < target_j_k[x]) {
                 return -1;
             }
+        }
+
+        // target_j_kのほうが大きければ return -1
+        // HHH → HH などの同じ文字列が続くときに対応
+        // B213316様のレポジトリを参考
+        if (suffix_i.length < target_j_k.length) {
+            return -1;
         }
 
         return 0; // この行は変更しなければならない。

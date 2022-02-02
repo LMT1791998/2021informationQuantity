@@ -339,7 +339,7 @@ public class Frequencer implements FrequencerInterface{
         // Assuming the suffix array is created from "Hi Ho Hi Ho",          
         // if target_start_end is"i", it will return 9 for "Hi Ho Hi Ho".    
         //                                                                   
-        //　ここにコードを記述せよ                                           
+        // ここにコードを記述せよ                                           
         //                                                                   
 	byte [] target_start_end = new byte[end-start];
         boolean isFound = true;
@@ -347,7 +347,7 @@ public class Frequencer implements FrequencerInterface{
 	for(int k = 0; k < target_start_end.length; k++) {
 		target_start_end[k] = myTarget[k+start];
 	}
-　
+	
 	int i;
         for(i=subByteStartIndex(start, end); i< mySpace.length; i++) {
                 int s = suffixArray[i];
@@ -472,7 +472,7 @@ public class Frequencer implements FrequencerInterface{
                9:o                           
               10:o Hi Ho                     
             */
-
+ 
             //                                         
             // ****  Please write code to check subByteStartIndex, and subByteEndIndex
             //

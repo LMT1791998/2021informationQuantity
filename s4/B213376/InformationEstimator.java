@@ -56,6 +56,14 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     @Override
     public double estimation(){
+	if (mySpace == null) {
+            return Double.MAX_VALUE;
+        }
+
+        if (myTarget == null || myTarget.length == 0) {
+            return 0.0;
+        }
+	    
         if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("length=%d ", +myTarget.length); }
         double [] suffixEstimation = new double[myTarget.length+1];  

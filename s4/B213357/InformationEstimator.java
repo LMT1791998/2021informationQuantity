@@ -45,6 +45,8 @@ public class InformationEstimator implements InformationEstimatorInterface {
     // IQ: information quantity for a count,
     // -log2(count/sizeof(space))
     double iq(int freq) {
+        if(freq == 0) return Double.MAX_VALUE;
+        
         return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -64,6 +66,11 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     @Override
     public double estimation(){
+
+        // 情報量が無限大になることの対策
+        if (myTarget.length == 0 || myTarget == null) return (double) 0.0;
+        if (mySpace.length == 0 || mySpace == null) return Double.MAX_VALUE;
+
         boolean [] partition = new boolean[myTarget.length+1];
         int np = 1 << (myTarget.length-1); // np    = number of partition
         double value = Double.MAX_VALUE;   // value = mininimum of each "value1".
@@ -107,8 +114,6 @@ public class InformationEstimator implements InformationEstimatorInterface {
                 double IQ;
                 if (IQEstimation[start][end] != -1) {
                     IQ = IQEstimation[start][end];
-                    //myFrequencer.setTarget(subBytes(myTarget, start, end));
-                    //IQ = iq(myFrequencer.frequency());
 
                 } else {
                     myFrequencer.setTarget(subBytes(myTarget, start, end));

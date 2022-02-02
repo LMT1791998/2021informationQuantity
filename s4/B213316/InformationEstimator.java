@@ -83,9 +83,18 @@ public class InformationEstimator implements InformationEstimatorInterface {
             // 文字列Sを接頭辞pとそれ以外tに分けたとき
             // Sの情報量Iq(S)は min(Iq(p)-log2(frequency(t)/len(S)))
             // len(S)はSの長さ
-            double value1 = iq(myFrequencer.subByteFrequency(i, myTarget.length));
             freqCnt++;
-            value1 = value1 + prefixIQ(prefixEstimation, i);
+            int freq = myFrequencer.subByteFrequency(i, myTarget.length);
+            if (freq == 0) {
+                if (debugMode) { System.out.println("True value is infinite!"); }
+                return Double.MAX_VALUE; // -log2(0) -> infinite
+            }
+            if (!prefixIQ(prefixEstimation, i)) {
+                if (debugMode) { System.out.println("True value is infinite!"); }
+                return Double.MAX_VALUE; // -log2(0) -> infinite
+            }
+            double value1 = iq(freq);
+            value1 = value1 + prefixEstimation[i];
             if (value1 < value) value = value1;
         }
 
@@ -129,23 +138,30 @@ public class InformationEstimator implements InformationEstimatorInterface {
     }
 
     // 接頭辞の情報量を求める
-    private double prefixIQ(double[] prefixEstimation, int endIdx) {
+    private boolean prefixIQ(double[] prefixEstimation, int endIdx) {
         if (endIdx == 0) {
-            return prefixEstimation[endIdx] = 0.0;
+            prefixEstimation[endIdx] = 0.0;
+            return true;
         }
         else if (endIdx == 1) {
             freqCnt++;
-            return prefixEstimation[endIdx] = iq(myFrequencer.subByteFrequency(0, endIdx));
+            int freq = myFrequencer.subByteFrequency(0, endIdx);
+            if (freq == 0) return false;
+            prefixEstimation[endIdx] = iq(freq);
+            return true;
         }
         else {
             double value = Double.MAX_VALUE;
             for (int i = 0; i < endIdx; i++) {
-                double value1 = iq(myFrequencer.subByteFrequency(i, endIdx));
+                int freq = myFrequencer.subByteFrequency(i, endIdx);
+                if (freq == 0) return false; // -log2(0) -> infinite. 情報量測定失敗
+                double value1 = iq(freq);
                 freqCnt++;
                 value1 = value1 + prefixEstimation[i];
                 if (value1 < value) value = value1;
             }
-            return prefixEstimation[endIdx] = value;
+            prefixEstimation[endIdx] = value;
+            return true;
         }
     }
 
@@ -195,6 +211,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
         System.out.printf("%10.5f\n", value);
 
         myObject.setTarget("00".getBytes());
+        value = myObject.estimation();
+        System.out.printf("%10.5f\n", value);
+
+        myObject.setTarget("456".getBytes());
         value = myObject.estimation();
         System.out.printf("%10.5f\n", value);
     }

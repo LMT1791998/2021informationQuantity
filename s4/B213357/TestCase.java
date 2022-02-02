@@ -122,6 +122,15 @@ public class TestCase {
 			value = myObject.estimation();
 			assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
 		
+			myObject.setTarget("".getBytes());
+			value = myObject.estimation();
+			assert (value > -0.0001) && (0.0001 >value): "IQ for  in 3210321001230123 should be 0.0. But it returns "+value;
+
+			myObject.setSpace("".getBytes());
+			myObject.setTarget("00".getBytes());
+			value = myObject.estimation();
+			assert (value == Double.MAX_VALUE): "IQ for 00 in should be Double.MAX_VALUE. But it returns "+value;
+
 			myObject.setSpace("321032100123012332103210012301233210321001230123".getBytes());
 			for (int i = 0; i < 1; i++) {
 				myObject.setTarget("321032100123012332103210012301233210321001230123".getBytes());

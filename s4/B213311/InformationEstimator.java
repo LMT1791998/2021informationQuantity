@@ -48,6 +48,8 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     // IQ: information quantity for a count, -log2(count/sizeof(space))
     double iq(int freq) {
+        if (freq == 0)
+            return Double.MAX_VALUE;
         return -Math.log10((double) freq / (double) mySpace.length) / Math.log10((double) 2.0);
     }
 

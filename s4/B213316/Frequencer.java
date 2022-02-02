@@ -2,6 +2,9 @@ package s4.B213316;  // ここは、かならず、自分の名前に変えよ�
 import java.lang.*;
 import java.util.Random;    // 乱択クイックソートのため
 import s4.specification.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 
 
 /*package s4.specification;
@@ -252,14 +255,10 @@ public class Frequencer implements FrequencerInterface{
         // ここに比較のコードを書け 
         int suffixLength = mySpace.length - i;
         int targetLength = k - j;
+        int prefixLength = suffixLength < targetLength ? suffixLength : targetLength;
 
-        // target_j_kのほうが長いときは必ず suffix_i < target_j_k
-        if (suffixLength < targetLength) {
-            return -1;
-        }
-    
         // suffix_iの先頭とtarget_j_kを比較
-        for (int ofs = 0; ofs < targetLength; ofs++) {
+        for (int ofs = 0; ofs < prefixLength; ofs++) {
             if (mySpace[i+ofs] > myTarget[j+ofs]) {
                 return 1;
             }
@@ -267,6 +266,12 @@ public class Frequencer implements FrequencerInterface{
                 return -1;
             }
         }
+
+        // 先頭が一致するもののtarget_j_kがsuffix_iよりも長いときは suffix_i < target_j_k
+        if (suffixLength < targetLength) {
+            return -1;
+        }
+
         return 0; // suffix_iの接頭辞がtarget_j_kと等しい
     }
 
@@ -413,6 +418,12 @@ public class Frequencer implements FrequencerInterface{
             int result = frequencerObject.frequency();
             System.out.print("Freq = "+ result+" ");
             if(4 == result) { System.out.println("OK"); } else {System.out.println("WRONG"); }
+            frequencerObject = new Frequencer();
+            frequencerObject.setSpace("abbzza".getBytes());
+            frequencerObject.setTarget("bbzza".getBytes());
+            result = frequencerObject.frequency();
+            System.out.print("Freq = "+result+" ");
+            if (result == 1) { System.out.println("OK"); } else { System.out.println("WRONG"); }
         }
         catch(Exception e) {
             System.out.println("STOP");

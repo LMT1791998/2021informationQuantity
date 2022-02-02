@@ -169,6 +169,13 @@ public class TestCase {
 			freq = myObject.subByteFrequency(3, 5);
 			assert freq == 1 : "HHHHHHHi, HHHHi[4:5]=i: " + freq;
 
+			// My testCase 19
+			myObject = new Frequencer();
+			myObject.setSpace("ccddxxa".getBytes());
+			myObject.setTarget("ddxxa".getBytes());
+			freq = myObject.frequency();
+			assert freq == 1 : "ccddxxa, ddxxa: " + freq;
+
 		} catch (Exception e) {
 			System.out.println("Exception occurred in Frequencer Object");
 			success = false;
@@ -178,10 +185,8 @@ public class TestCase {
 			InformationEstimatorInterface myObject;
 			double value;
 			System.out.println("checking InformationEstimator");
-<<<<<<< Updated upstream
 			myObject = new InformationEstimator();
 			myObject.setSpace("3210321001230123".getBytes());
-=======
 
 			// Test Case 1 Target is not set
 			myObject = new InformationEstimator();
@@ -211,8 +216,9 @@ public class TestCase {
 			assert value == Double.MAX_VALUE
 					: "Target is not set. It should returns Double.MAX_VALUE. But it returns " + value;
 
+			// Test Case 5
+
 			myObject.setSpace("3210321001230123".getBytes());
->>>>>>> Stashed changes
 			myObject.setTarget("0".getBytes());
 			value = myObject.estimation();
 			assert (value > 1.9999) && (2.0001 > value)

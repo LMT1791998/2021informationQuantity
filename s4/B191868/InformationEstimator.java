@@ -45,6 +45,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
     double iq(int start, int end) {
         myFrequencer.setTarget(subBytes(myTarget, start, end));
         int freq = myFrequencer.frequency();
+        if(freq == 0) return Double.MAX_VALUE;
         return  - Math.log10((double) freq / (double) mySpace.length)/ Math.log10((double) 2.0);
     }
 
@@ -63,7 +64,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
     @Override
     public double estimation(){
         // Returns 0.0 when the TARGET is not set or TARGET's length is zero
-        if(myTarget == null || myTarget.length == 0) { return 0.0; }
+        if(myTarget == null || myTarget.length == 0) { return (double) 0.0; }
         // Returns Double.MAX_VALUE when the true value is infinite, or SPACE is not set
         if(mySpace == null || mySpace.length == 0)  { return Double.MAX_VALUE; }
 

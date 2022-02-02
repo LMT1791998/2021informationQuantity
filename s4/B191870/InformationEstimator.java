@@ -62,6 +62,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
        double[] suffixEstimation = new double[myTarget.length];
        //calculate iq of the head elenment
        myFrequencer.setTarget(subBytes(myTarget, 0, 1));
+       if (myFrequencer.frequency()== 0) {return Double.MAX_VALUE;}
        suffixEstimation[0] = iq(myFrequencer.frequency());
 
         for(int i = 1; i < suffixEstimation.length; i++){
@@ -72,6 +73,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
             for(int j = 0; j < i; j++){
                 // comparision
                 myFrequencer.setTarget(subBytes(myTarget, j+1, i+1));
+                if (myFrequencer.frequency()== 0) {return Double.MAX_VALUE;}
                 double local_iq = iq(myFrequencer.frequency());
                 if(temp_min > (suffixEstimation[j] + local_iq)) {
                     temp_min = suffixEstimation[j] + local_iq;
@@ -85,7 +87,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
         // returns 0.0 when the target is not set or Target's length is zero;
         if(myTarget == null || myTarget.length == 0) { return 0.0; }
         // returns Double.MAX_VALUE when space is not set
-        if(mySpace.length == 0)  { return Double.MAX_VALUE; }
+        if(mySpace == null )  { return Double.MAX_VALUE; }
 
         return suffixEstimation[myTarget.length-1];
 	

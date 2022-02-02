@@ -97,6 +97,12 @@ public class TestCase {
         myObject.setTarget("Ho".getBytes());
         freq = myObject.frequency();
         if(2 != freq) {System.out.println("frequency() for Hi_Ho_Hi_Ho, should return 2, when taget is Ho. But it returns "+freq); c++; }
+        // targetCompareがtarget_j_kがsuffix_iより長いとき常に-1を返す実装だと落ちるケース
+        myObject = new Frequencer();
+        myObject.setSpace("abbzza".getBytes());
+        myObject.setTarget("bbzza".getBytes());
+        freq = myObject.frequency();
+        if(1 != freq) {System.out.println("frequency() for abbzza, should return 2, when taget is bbzza. But it returns "+freq); c++; }
         /* please note subByteFreqency(0,0) is considered illeagal specification, and you should not include this case */
         myObject = new Frequencer();
         myObject.setSpace("AAAB".getBytes());
@@ -172,6 +178,10 @@ public class TestCase {
         myObject.setTarget("00".getBytes());
         value = myObject.estimation();
         if((value < 3.9999) || (4.0001 <value)) { System.out.println("IQ for 00 in 3210321001230123 should be 4.0. But it returns "+value); c++; }
+        myObject.setTarget("456".getBytes());
+        value = myObject.estimation();
+        if(value < Double.MAX_VALUE) { System.out.println("IQ for 456 in 3210321001230123 should be Double.MAX_VALUE(infinite). But it returns "+value); c++; }
+
     }
     catch(Exception e) {
         System.out.println("Exception occurred: STOP");
