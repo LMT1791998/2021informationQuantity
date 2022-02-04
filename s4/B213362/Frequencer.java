@@ -1,7 +1,7 @@
 package s4.B213362;  // ここは、かならず、自分の名前に変えよ。
+
 import java.lang.*;
 import s4.specification.*;
-
 
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
@@ -88,6 +88,7 @@ public class Frequencer implements FrequencerInterface{
         if(i < j) return 1;
         else if(i > j) return -1;
         else return 0;
+
     }
 
     // marge sort
@@ -126,10 +127,8 @@ public class Frequencer implements FrequencerInterface{
         for (int i = 0; i <= remaining; i++){
             array[current + i] = helper[helperLeft + i];
         }
-
-
-
     }
+
     public void setSpace(byte []space) {
 
         // suffixArrayの前処理は、setSpaceで定義せよ。
@@ -141,8 +140,8 @@ public class Frequencer implements FrequencerInterface{
             suffixArray[i] = i; // Please note that each suffix is expressed by one integer.      
         }
 
-
         sort(suffixArray,0,suffixArray.length-1);
+
         //                                            
         // ここに、int suffixArrayをソートするコードを書け。
         // もし、mySpace が"ABC"ならば、
@@ -235,30 +234,27 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここに比較のコードを書け 
         //
-
-        // suffix 行列と target 配列を作成
-        byte suffix[] = new byte[this.mySpace.length - i];
-        for(int n=0; n<suffix.length; n++)
-        {
-            suffix[n] = this.mySpace[i+n];
-        }
-        byte target[] = new byte[k - j];
-        for(int n=0; n<target.length; n++)
-        {
-            target[n] = this.myTarget[j+n];
-        }
         
-        // 比較を行う
-        int range;
-        if( suffix.length > target.length ) range = target.length;
-        else range = suffix.length;
-        for(int n=0; n<range; n++)
+        // B213377 さんのコードを参考させていただきました
+        // 処理を行う箇所の抜き出し
+        String mySpaceString = new String(mySpace);
+        String myTargetString = new String(myTarget);
+        String suffix_i = mySpaceString.substring(i);
+        String target_j_k = myTargetString.substring(j, k);
+
+        int range = Math.min(suffix_i.length(), target_j_k.length());
+
+        // 比較を行い，条件に沿って return    
+        for (int n=0; n<range; n++)
         {
-            if(suffix[n] > target[n]) return 1;
-            if(suffix[n] < target[n]) return -1;
+            if (suffix_i.charAt(n) > target_j_k.charAt(n))
+                return 1;
+            else if (suffix_i.charAt(n) < target_j_k.charAt(n))
+                return -1;
         }
-        if( suffix.length > target.length ) return 0;
+        if (target_j_k.length() <= suffix_i.length()) return 0;
         else return -1;
+
     }
 
 
@@ -293,11 +289,16 @@ public class Frequencer implements FrequencerInterface{
         // ここにコードを記述せよ。                                                 
         //                                                                         
 
-        for(int i=0; i<this.mySpace.length; i++)
+        // B213377 さんのコードを参考させていただきました
+        // end が貫通しないための処理
+        if (end > myTarget.length) end = myTarget.length;
+
+        for(int i=0; i<this.suffixArray.length; i++)
         {
             if(targetCompare(this.suffixArray[i], start, end)==0) return i; 
         }
-        return suffixArray.length; //このコードは変更しなければならない。     
+        return -1;     
+
     }
 
     private int subByteEndIndex(int start, int end) {
@@ -329,11 +330,18 @@ public class Frequencer implements FrequencerInterface{
         //                                                                   
         //　ここにコードを記述せよ                                          
         //
-        for(int i=0; i<this.mySpace.length; i++)
+       
+        // B213377 さんのコードを参考させていただきました
+        // end が貫通しないための処理
+        if (end > myTarget.length) end = myTarget.length;
+
+        for(int i=this.suffixArray.length - 1; i>=0; i--)
         {
-            if(targetCompare(this.suffixArray[i], start, end)>0) return i; 
+            if(targetCompare(this.suffixArray[i], start, end)==0)
+                return i + 1; 
         }
-        return suffixArray.length; //このコードは変更しなければならない。     
+        return -1; //このコードは変更しなければならない。  
+        
     }
 
 

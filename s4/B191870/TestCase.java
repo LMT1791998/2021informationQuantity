@@ -55,25 +55,25 @@ public class TestCase {
             myObject.setSpace("".getBytes());
             myObject.setTarget("a".getBytes());
             freq = myObject.frequency();
-            assert freq == 0 : "SPACE IS NOT SET, a: "+ freq;
+            assert freq == 0 : "SPACE LENGTH = 0, a: "+ freq;
             //case 3
             myObject = new Frequencer();
             myObject.setSpace("abcdabcd".getBytes());
             myObject.setTarget("".getBytes());
             freq = myObject.frequency();
-            assert freq == -1 : "abcdabcd,TARGET IS NOT SET : "+ freq;
+            assert freq == -1 : "abcdabcd,TARGET LENGTH = 0 : "+ freq;
             //case 4      
             myObject = new Frequencer();
-            myObject.setSpace(null);
             myObject.setTarget("abc".getBytes());
             freq = myObject.frequency();
-            assert freq == 0 : "null,  abc : "+ freq;
+            assert freq == 0 : "NO SPACE,  abc : "+ freq;
             //case 5 
             myObject = new Frequencer();
             myObject.setSpace("abcdabcd".getBytes());
-            myObject.setTarget(null);
+            //myObject.setTarget(null);
             freq = myObject.frequency();
-            assert freq == -1 : "abcdabcd,   null : "+ freq;   
+            assert freq == -1 : "abcdabcd, NO TARGET : "+ freq;   
+        System.out.println("All test case has been done!");
 	}
 	catch(Exception e) {
 	    System.out.println("Exception occurred in Frequencer Object");

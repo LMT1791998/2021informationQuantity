@@ -138,6 +138,37 @@ public class TestCase {
 			value = myObject.estimation();
 			assert (value > 3.9999) && (4.0001 > value)
 					: "IQ for 00 in 3210321001230123 should be 3.0. But it returns " + value;
+
+			// Newly added test cases
+			myObject.setSpace("abdcdcddabfefegh".getBytes());
+			myObject.setTarget("a".getBytes());
+			value = myObject.estimation();
+			assert (value > 2.9999) && (3.0001 > value)
+					: "IQ for a in abdcdcddabfefegh should be 3.0. But it returns " + value;
+			myObject.setTarget("d".getBytes());
+			value = myObject.estimation();
+			assert (value > 1.9999) && (2.0001 > value)
+					: "IQ for d in abdcdcddabfefegh should be 2.0. But it returns " + value;
+			myObject.setTarget("h".getBytes());
+			value = myObject.estimation();
+			assert (value > 3.9999) && (4.0001 > value)
+					: "IQ for h in abdcdcddabfefegh should be 4.0. But it returns " + value;
+			myObject = new InformationEstimator();
+			value = myObject.estimation();
+			assert (value == Double.MAX_VALUE)
+					: "It should return Double.MAX_VALUE because the space is not set. But it returns " + value;
+			myObject = new InformationEstimator();
+			myObject.setSpace("3210321001230123".getBytes());
+			value = myObject.estimation();
+			assert (value == 0.0)
+					: "It should return 0.0 because the target is not set. But it returns " + value;
+			myObject = new InformationEstimator();
+			myObject.setSpace("3210321001230123".getBytes());
+			myObject.setTarget("".getBytes());
+			value = myObject.estimation();
+			assert (value == 0.0)
+					: "It should return 0.0 becuase the target's length is zero. But it returns " + value;
+
 		} catch (Exception e) {
 			System.out.println("Exception occurred in InformationEstimator Object");
 			success = false;

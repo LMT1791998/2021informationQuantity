@@ -1,4 +1,4 @@
-package s4.B213327; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
+package s4.B213309; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
 import java.lang.*;
 import s4.specification.*;
 
@@ -16,7 +16,7 @@ public interface InformationEstimatorInterface {
 */
 
 
-public class InformationEstimator implements InformationEstimatorInterface {
+public class InformationEstimator_ORG implements InformationEstimatorInterface {
     static boolean debugMode = false;
     // Code to test, *warning: This code is slow, and it lacks the required test
     byte[] myTarget; // data to compute its information quantity
@@ -59,7 +59,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
         boolean [] partition = new boolean[myTarget.length+1];
         int np = 1<<(myTarget.length-1);
         double value = Double.MAX_VALUE; // value = mininimum of each "value1".
-	if(debugMode) { showVariables(); }
+	    if(debugMode) { showVariables(); }
         if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
 
         for(int p=0; p<np; p++) { // There are 2^(n-1) kinds of partitions.
@@ -95,15 +95,15 @@ public class InformationEstimator implements InformationEstimatorInterface {
             // Get the minimal value in "value"
             if(value1 < value) value = value1;
         }
-	if(debugMode) { System.out.printf("%10.5f\n", value); }
+	    if(debugMode) { System.out.printf("%10.5f\n", value); }
         return value;
     }
 
     public static void main(String[] args) {
-        InformationEstimator myObject;
+        InformationEstimator_ORG myObject;
         double value;
 	debugMode = true;
-        myObject = new InformationEstimator();
+        myObject = new InformationEstimator_ORG();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());
         value = myObject.estimation();
@@ -112,6 +112,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myObject.setTarget("0123".getBytes());
         value = myObject.estimation();
         myObject.setTarget("00".getBytes());
+        value = myObject.estimation();
+        // additional case
+        myObject.setSpace("1212121221212112121212121221221".getBytes());
+        myObject.setTarget("1212121211212222222212111111111121211212111212121221".getBytes());
         value = myObject.estimation();
     }
 }
