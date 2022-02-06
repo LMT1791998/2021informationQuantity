@@ -82,7 +82,7 @@ public class TestCase {
 	    value = myObject.estimation();
 	    assert (value > 3.9999) && (4.0001 >value): "IQ for 00 in 3210321001230123 should be 3.0. But it returns "+value;
 
-				// additional case
+		// additional case
 		// Case 1: myTarget == null
 		InformationEstimatorInterface myObject2;
 		myObject2 = new InformationEstimator();

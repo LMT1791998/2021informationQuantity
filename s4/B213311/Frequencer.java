@@ -106,6 +106,47 @@ public class Frequencer implements FrequencerInterface {
         }
     }
 
+    // マージソート
+    // ソート関数
+    private void sort(int low, int high) {
+        if (low < high) {
+            int middle = (low + high) >>> 1;
+            sort(low, middle);
+            sort(middle + 1, high);
+            merge(low, middle, high);
+        }
+    }
+
+    // マージ関数
+    private void merge(int low, int middle, int high) {
+        int[] helper = new int[suffixArray.length];
+
+        for (int i = low; i <= high; i++) {
+            helper[i] = suffixArray[i];
+        }
+        int helperLeft = low;
+        int helperRight = middle + 1;
+        int current = low;
+
+        while (helperLeft <= middle && helperRight <= high) {
+            if (suffixCompare(helper[helperLeft], helper[helperRight]) <= 0) {
+                suffixArray[current] = helper[helperLeft];
+                helperLeft++;
+            } else {
+                suffixArray[current] = helper[helperRight];
+                helperRight++;
+
+            }
+            current++;
+        }
+        // low側が残っているなら追加する
+        // high側が残っているなら揃っているので何もしなくて良い
+        int remaining = middle - helperLeft;
+        for (int i = 0; i <= remaining; i++) {
+            suffixArray[current + i] = helper[helperLeft + i];
+        }
+    }
+
     public void setSpace(byte[] space) {
         // suffixArrayの前処理は、setSpaceで定義せよ。
         mySpace = space;
@@ -134,15 +175,9 @@ public class Frequencer implements FrequencerInterface {
         // suffixArray[ 2]= 0:CBA
         // のようになるべきである。
 
-        for (int i = space.length - 1; i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (suffixCompare(suffixArray[j], suffixArray[j + 1]) > 0) {
-                    int swap = suffixArray[j];
-                    suffixArray[j] = suffixArray[j + 1];
-                    suffixArray[j + 1] = swap;
-                }
-            }
-        }
+        // マージソートでソーティング
+        sort(0, suffixArray.length - 1);
+
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。
@@ -257,7 +292,39 @@ public class Frequencer implements FrequencerInterface {
             return -1;
         }
 
-        return 0; // この行は変更しなければならない。
+        return 0;
+    }
+
+    // Binary Search (startIndex)
+    private int startIndexBinarySearch(int start, int end) {
+        int low = -1;
+        int high = suffixArray.length;
+
+        while (high - low > 1) {
+            int middle = (low + high) >>> 1;
+            if (targetCompare(suffixArray[middle], start, end) < 0) {
+                low = middle;
+            } else {
+                high = middle;
+            }
+        }
+        return high;
+    }
+
+    // Binary Search (endIndex)
+    private int endIndexBinarySearch(int start, int end, int startIndex) {
+        int low = startIndex - 1;
+        int high = suffixArray.length;
+
+        while (high - low > 1) {
+            int middle = (low + high) >>> 1;
+            if (targetCompare(suffixArray[middle], start, end) <= 0) {
+                low = middle;
+            } else {
+                high = middle;
+            }
+        }
+        return high;
     }
 
     private int subByteStartIndex(int start, int end) {
@@ -290,14 +357,10 @@ public class Frequencer implements FrequencerInterface {
         // if target_start_end is "Ho ", it will return 6.
         //
         // ここにコードを記述せよ。
-        int startIndex = 0;
-        for (; startIndex < mySpace.length; startIndex++) {
-            if (targetCompare(suffixArray[startIndex], start, end) == 0) {
-                break;
-            }
-        }
 
-        // startIndexがなければ0を返す
+        // BinarySearchでstartIndexを探す
+        int startIndex = startIndexBinarySearch(start, end);
+
         return startIndex;
     }
 
@@ -331,14 +394,12 @@ public class Frequencer implements FrequencerInterface {
         //
         // ここにコードを記述せよ
 
-        // startIndexからループを開始する
-        int endIndex = subByteStartIndex(start, end);
+        // startIndexを探す
+        int startIndex = subByteStartIndex(start, end);
+        // BinarySearchでendIndexを探す
+        int endIndex = endIndexBinarySearch(start, end, startIndex);
 
-        for (; endIndex < mySpace.length; endIndex++) {
-            if (targetCompare(suffixArray[endIndex], start, end) != 0)
-                break;
-        }
-        return endIndex; // この行は変更しなければならない、
+        return endIndex;
     }
 
     // Suffix Arrayを使ったプログラムのホワイトテストは、

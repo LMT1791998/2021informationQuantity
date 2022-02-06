@@ -93,7 +93,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
         double value;
 	    debugMode = true;
         myObject = new InformationEstimator();
+	myObject.setTarget("0".getBytes());
+        value = myObject.estimation();
         myObject.setSpace("3210321001230123".getBytes());
+	    value = myObject.estimation();
         myObject.setTarget("0".getBytes());
         value = myObject.estimation();
         myObject.setTarget("01".getBytes());
