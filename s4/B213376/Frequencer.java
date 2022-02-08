@@ -165,7 +165,6 @@ public class Frequencer implements FrequencerInterface{
         // のようになるべきである。
 
         mergeSort(suffixArray, suffixArray.length);
-
     }
         
     
@@ -203,6 +202,7 @@ public class Frequencer implements FrequencerInterface{
         // 演習の内容は、適切なsubByteStartIndexとsubByteEndIndexを定義することである。
         int first = subByteStartIndex(start, end);
         int last1 = subByteEndIndex(start, end);
+        //System.out.println("start:"+first+"  end:"+last1);  
         return last1 - first;
     }
     // 変更してはいけないコードはここまで。
@@ -296,13 +296,12 @@ public class Frequencer implements FrequencerInterface{
         // Assuming the suffix array is created from "Hi Ho Hi Ho",                 
         // if target_start_end is "Ho ", it will return 6.                
         //                                                                          
-        // ここにコードを記述せよ。                                                 
-        if(targetReady == false) return -1;
-
+        // ここにコードを記述せよ。     
+        // fast search                                            
         int answer=-1;
         int lo=0,hi=suffixArray.length-1;
         int med = (lo+hi)/2;
-
+        
         while(lo<hi){
             if(targetCompare(suffixArray[med],start,end)>=0){
                 hi=med;
@@ -311,11 +310,24 @@ public class Frequencer implements FrequencerInterface{
                 lo=med+1;
             }
             med = (lo+hi)/2;
+            //System.out.println("inside start index");
         }
         if(targetCompare(suffixArray[med],start,end)==0) answer=med;
         
+        return answer;   
+        
+        // slow search
+        // int answer=-1;
 
-        return answer;               
+        // for(int i=0;i<suffixArray.length;i++){
+        //     System.out.println("start index target compare " +i+":  "+targetCompare(suffixArray[i],start,end));
+        //     if(targetCompare(suffixArray[i],start,end)==0){
+        //         answer=i;
+        //         break;
+        //     }
+        // }
+
+        // return answer;         
     }
     
     private int subByteEndIndex(int start, int end) {
@@ -345,26 +357,50 @@ public class Frequencer implements FrequencerInterface{
         // Assuming the suffix array is created from "Hi Ho Hi Ho",          
         // if target_start_end is"i", it will return 9 for "Hi Ho Hi Ho".    
         //                                                                   
-        //　ここにコードを記述せよ                                           
-        if(targetReady == false) return -1;
-
-
+        //　ここにコードを記述せよ 
+        //fast search                                          
         int answer =-1;
         int lo=0,hi=suffixArray.length-1;
         int med = (lo+hi)/2;
 
         while(lo<hi){
+            if(lo==hi-1){
+                if(targetCompare(suffixArray[hi],start,end)==0){
+                    lo=hi;
+                    med=hi;
+                    break;
+                }
+                if(targetCompare(suffixArray[lo],start,end)==0){
+                    hi=lo;
+                    med=lo;
+                    break;
+                }
+                lo =hi;
+                break;
+            }
             if(targetCompare(suffixArray[med],start,end)<=0){
-                lo=med+1;
+                lo=med;
             }
             else{
-                hi=med;
+                hi=med-1;  
             }
             med = (lo+hi)/2;
+            //System.out.println("inside end index "+lo+" "+med+" "+hi);
         }
-        if(targetCompare(suffixArray[med-1],start,end)==0) answer=med;
+        if(targetCompare(suffixArray[med],start,end)==0) answer=med+1;
         
-        return answer;    
+        return answer; 
+        
+        //slow search
+        // int answer=-1;
+
+        // for(int i=suffixArray.length-1; i>=0; i--){
+        //     if(targetCompare(suffixArray[i],start,end)==0){
+        //         answer=i+1;
+        //         break;
+        //     }
+        // }
+        // return answer;      
     }
 
 
@@ -409,21 +445,21 @@ public class Frequencer implements FrequencerInterface{
                9:o                           
               10:o Hi Ho                     
             */
+            int ans;
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("Hi Ho Hi Ho".getBytes());
             // check subByteStartIndex and subByteEndIndex
             frequencerObject.setTarget("Ho Ho Ho Ho".getBytes());
-            int ans = frequencerObject.subByteStartIndex(0,2);
+            ans = frequencerObject.subByteStartIndex(0,2);
             System.out.println("frequencerObject.subByteStartIndex(0,2) = " + ans); // return 5
             ans = frequencerObject.subByteStartIndex(0,3);
             System.out.println("frequencerObject.subByteStartIndex(0,3) = " + ans); // return 6
-
+            
             frequencerObject.setTarget("High_and_Low".getBytes());
             ans = frequencerObject.subByteEndIndex(0,2);
             System.out.println("frequencerObject.subByteEndIndex(0,2) = " + ans); // return 5
             ans = frequencerObject.subByteEndIndex(1,2);
             System.out.println("frequencerObject.subByteEndIndex(1,2) = " + ans); // return 9
-            
             // check frequency result
             frequencerObject.setTarget("H".getBytes());
             int result = frequencerObject.frequency();

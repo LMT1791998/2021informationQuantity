@@ -1,10 +1,6 @@
 package s4.B213377; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID.
 
-import java.io.StringBufferInputStream;
 import java.lang.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import s4.specification.*;
 
 /*package s4.specification;
@@ -429,27 +425,6 @@ public class Frequencer implements FrequencerInterface {
         }
     }
 
-    private byte[] readByteFromFile(String filename) {
-        try {
-            Path filePath = Path.of(filename);
-            String spaceText = Files.readString(filePath);
-            return spaceText.getBytes();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void setSpaceFromFile(String filename) {
-        byte[] byteSpace = readByteFromFile(filename);
-        setSpace(byteSpace);
-    }
-
-    public void setTargetFromFile(String filename) {
-        byte[] byteTarget = readByteFromFile(filename);
-        setTarget(byteTarget);
-    }
-
     // Suffix Arrayを使ったプログラムのホワイトテストは、
     // privateなメソッドとフィールドをアクセスすることが必要なので、
     // クラスに属するstatic mainに書く方法もある。
@@ -495,23 +470,13 @@ public class Frequencer implements FrequencerInterface {
              * 10:o Hi Ho
              */
 
-            frequencerObject = new Frequencer();
-            // Time Benchmarking
-            System.out.println("\n-----------------------");
-            long startTime = System.currentTimeMillis();
-            frequencerObject.setSpaceFromFile("../data/space_1k.txt");
-            long endSetSpaceTime = System.currentTimeMillis();
-            frequencerObject.setTargetFromFile("../data/target_100b.txt");
-            long endSetTargetTime = System.currentTimeMillis();
             int result = frequencerObject.frequency();
-            long endCalFrequencyTime = System.currentTimeMillis();
-            System.out.println("setSpace() execution time: " + (endSetSpaceTime - startTime) + "ms");
-            System.out.println("setTarget() execution time: " + (endSetTargetTime - endSetSpaceTime) + "ms");
-            System.out.println("frequency() execution time: " + (endCalFrequencyTime - endSetTargetTime) + "ms");
-            System.out.println("Total execution time: " + (endCalFrequencyTime - startTime) + "ms");
-            System.out.println("Freq = " + result);
-            System.out.println("-----------------------");
-            //
+            System.out.print("Freq = " + result + " ");
+            if (4 == result) {
+                System.out.println("OK");
+            } else {
+                System.out.println("WRONG");
+            }
 
         } catch (Exception e) {
             System.out.println("STOP");

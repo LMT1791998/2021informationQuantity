@@ -2,6 +2,7 @@ package s4.B213309;  // ここは、かならず、自分の名前に変えよ�
 import java.lang.*;
 import s4.specification.*;
 
+import java.io.*;
 
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
@@ -119,6 +120,8 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである
         
+        sortMerge(0, suffixArray.length);
+        /*　old method
         for(int i = space.length - 1; i > 0; i--){
 	        for(int j = 0; j < i; j++){
 		        if(suffixCompare(suffixArray[j], suffixArray[j + 1]) > 0){
@@ -128,6 +131,45 @@ public class Frequencer implements FrequencerInterface{
 	    	    }
 	        }
 	    }
+        */
+
+    }
+
+    // suffixArryを昇順にソートする関数
+    // [start] ~ [end-1]番目の範囲でソートする
+    private void sortMerge(int start, int end){
+        // 1以下なら返す
+        if (end - start <= 1){
+            return;
+        }
+
+        // 真ん中で分けて1個になるまで分解(再帰)
+        int size = end - start;
+        int mid = (start + end) / 2;
+        sortMerge(start, mid);
+        sortMerge(mid, end);
+
+        // [1, 2, 3, 4][5, 6, 7, 8]をソートするなら、
+        // 下の配列を作って両端から比較する
+        // [1, 2, 3, 4, 8, 7, 6, 5] (suffixcomp)
+        // i->                  <-j
+        int [] suffixcomp = new int [size];
+        for(int i = 0; i < size / 2; i++){
+            suffixcomp[i] = suffixArray[start + i];
+            suffixcomp[size - 1 - i] = suffixArray[mid + i];
+        }
+        if(size % 2 == 1)
+            suffixcomp[size/2] = suffixArray[mid + size / 2];
+
+        int i = 0;  // iは前から後ろへ
+        int j = size - 1;    // jは後ろから前へ
+        int k = 0;
+        
+        // 昇順にマージ
+        while(i != j){
+            suffixArray[start + k++] = suffixCompare(suffixcomp[i], suffixcomp[j]) > 0 ? suffixcomp[j--] : suffixcomp[i++];
+        }
+        suffixArray[start + k] = suffixcomp[i];
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。
@@ -322,15 +364,19 @@ public class Frequencer implements FrequencerInterface{
         try { // テストに使うのに推奨するmySpaceの文字は、"ABC", "CBA", "HHH", "Hi Ho Hi Ho".
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("ABC".getBytes());
+            System.out.println("=============");
             frequencerObject.printSuffixArray();
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("CBA".getBytes());
+            System.out.println("=============");
             frequencerObject.printSuffixArray();
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("HHH".getBytes());
+            System.out.println("=============");
             frequencerObject.printSuffixArray();
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("Hi Ho Hi Ho".getBytes());
+            System.out.println("=============");
             frequencerObject.printSuffixArray();
             /* Example from "Hi Ho Hi Ho"    
                0: Hi Ho                      
@@ -354,9 +400,30 @@ public class Frequencer implements FrequencerInterface{
             // ****  Please write code to check subByteStartIndex, and subByteEndIndex
             //
 
-            int result = frequencerObject.frequency();
-            System.out.print("Freq = "+ result+" ");
-            if(4 == result) { System.out.println("OK"); } else {System.out.println("WRONG"); }
+
+            // BenchMarkTest
+            // 実行方法
+            // $ make Fre
+            // $ awk 1 ../data/rand_100k.txt ../data/rand_1k.txt | make runFre
+            /*
+            if (System.in.available() != 0) {
+                InputStreamReader isr = new InputStreamReader(System.in, "UTF-8");
+                BufferedReader br = new BufferedReader(isr);
+                String space, target;
+                space = br.readLine();
+                target = br.readLine();
+
+                long start = System.currentTimeMillis();
+                Frequencer myObject;
+                myObject = new Frequencer();
+                myObject.setSpace(space.getBytes());
+	            myObject.setTarget(target.getBytes());
+	            myObject.frequency();
+                long end = System.currentTimeMillis();
+
+                System.out.println((end - start)  + "ms");
+            }
+            */
         }
         catch(Exception e) {
             System.out.println("STOP");
