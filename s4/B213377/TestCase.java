@@ -67,7 +67,7 @@ public class TestCase {
 			myObject.setTarget("Hi".getBytes());
 			freq = myObject.frequency();
 			assert freq == 2 : "NEW TEST4: Hi Ho Hi Ho, H: " + freq;
-			// Test case for positive case
+			// Test case for negative case
 			myObject = new Frequencer();
 			myObject.setSpace("Hi Ho Hi Ho".getBytes());
 			myObject.setTarget("Car".getBytes());

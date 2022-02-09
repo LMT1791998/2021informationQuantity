@@ -49,15 +49,6 @@ public class Frequencer implements FrequencerInterface {
         }
     }
 
-    // Method to subByte the byte array
-    private byte[] subBytes(byte[] x, int start, int end) {
-        byte[] result = new byte[end - start];
-        for (int i = 0; i < end - start; i++) {
-            result[i] = x[start + i];
-        }
-        return result;
-    }
-
     private int suffixCompare(int i, int j) {
         // suffixCompareはソートのための比較メソッドである。
         // 次のように定義せよ。
@@ -79,21 +70,21 @@ public class Frequencer implements FrequencerInterface {
 
         // ここにコードを記述せよ
         int result = 0;
-        byte[] suffix_i = subBytes(mySpace, i, mySpace.length);
-        byte[] suffix_j = subBytes(mySpace, j, mySpace.length);
-        int minLength = Math.min(suffix_i.length, suffix_j.length);
+        int suffix_i_length = mySpace.length - i;
+        int suffix_j_length = mySpace.length - j;
+        int minLength = Math.min(suffix_i_length, suffix_j_length);
 
         for (int k = 0; k < minLength; k++) {
-            if (suffix_i[k] > suffix_j[k]) {
+            if (mySpace[i + k] > mySpace[j + k]) {
                 result = 1;
                 break;
-            } else if (suffix_i[k] < suffix_j[k]) {
+            } else if (mySpace[i + k] < mySpace[j + k]) {
                 result = -1;
                 break;
             }
         }
-        if (suffix_i.length != suffix_j.length && result == 0) {
-            if (suffix_i.length > suffix_j.length) {
+        if (suffix_i_length != suffix_j_length && result == 0) {
+            if (suffix_i_length > suffix_j_length) {
                 result = 1;
             } else {
                 result = -1;
@@ -188,7 +179,6 @@ public class Frequencer implements FrequencerInterface {
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。
-
     public void setTarget(byte[] target) {
         myTarget = target;
         if (myTarget.length > 0)
@@ -267,43 +257,21 @@ public class Frequencer implements FrequencerInterface {
         //
         // ここに比較のコードを書け
         //
-        // int result = 0;
-        // String mySpaceString = new String(mySpace);
-        // String myTargetString = new String(myTarget);
-        // String suffix_i = mySpaceString.substring(i);
-        // String target_j_k = myTargetString.substring(j, k);
-
-        // int minLength = Math.min(suffix_i.length(), target_j_k.length());
-
-        // for (int l = 0; l < minLength; l++) {
-        // if (suffix_i.charAt(l) > target_j_k.charAt(l)) {
-        // result = 1;
-        // break;
-        // } else if (suffix_i.charAt(l) < target_j_k.charAt(l)) {
-        // result = -1;
-        // break;
-        // }
-        // }
-        // if (target_j_k.length() > suffix_i.length() && result == 0) {
-        // result = -1;
-        // }
-        // return result;
         int result = 0;
-        byte[] suffix_i = subBytes(mySpace, i, mySpace.length);
-        byte[] target_j_k = subBytes(myTarget, j, k);
-
-        int minLength = Math.min(suffix_i.length, target_j_k.length);
+        int suffix_i_length = mySpace.length - i;
+        int target_j_k_length = k - j;
+        int minLength = Math.min(suffix_i_length, target_j_k_length);
 
         for (int l = 0; l < minLength; l++) {
-            if (suffix_i[l] > target_j_k[l]) {
+            if (mySpace[i + l] > myTarget[j + l]) {
                 result = 1;
                 break;
-            } else if (suffix_i[l] < target_j_k[l]) {
+            } else if (mySpace[i + l] < myTarget[j + l]) {
                 result = -1;
                 break;
             }
         }
-        if (target_j_k.length > suffix_i.length && result == 0) {
+        if (target_j_k_length > suffix_i_length && result == 0) {
             result = -1;
         }
         return result;
@@ -477,7 +445,6 @@ public class Frequencer implements FrequencerInterface {
             } else {
                 System.out.println("WRONG");
             }
-
         } catch (Exception e) {
             System.out.println("STOP");
         }

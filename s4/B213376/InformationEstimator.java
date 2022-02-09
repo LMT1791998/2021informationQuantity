@@ -56,7 +56,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
 
     @Override
     public double estimation(){
-	if (mySpace == null) {
+	    if (mySpace == null) {
             return Double.MAX_VALUE;
         }
 
@@ -93,7 +93,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
         double value;
 	    debugMode = true;
         myObject = new InformationEstimator();
-	myObject.setTarget("0".getBytes());
+        myObject.setTarget("0".getBytes());
         value = myObject.estimation();
         myObject.setSpace("3210321001230123".getBytes());
 	    value = myObject.estimation();
@@ -104,6 +104,8 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myObject.setTarget("0123".getBytes());
         value = myObject.estimation();
         myObject.setTarget("00".getBytes());
+        value = myObject.estimation();
+        myObject.setTarget("4".getBytes());
         value = myObject.estimation();
     }
 }

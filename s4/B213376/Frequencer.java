@@ -3,7 +3,6 @@ package s4.B213376;
 import java.lang.*;
 import s4.specification.*;
 
-
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
   public interface FrequencerInterface {     // This interface provides the design for frequency counter.
@@ -17,8 +16,6 @@ import s4.specification.*;
   // For the incorrect value of START or END, the behavior is undefined.
   }
 */
-
-
 
 public class Frequencer implements FrequencerInterface{
     byte [] myTarget;
@@ -68,7 +65,9 @@ public class Frequencer implements FrequencerInterface{
         // if suffix_i > suffix_j, it returns 1   
         // if suffix_i < suffix_j, it returns -1  
         // if suffix_i = suffix_j, it returns 0;   
+        
 
+        // DONT COPY STRING JUST USE INDEX
         byte[] suffix_i = new byte[mySpace.length-i];
         for(int idx = 0; idx<mySpace.length-i; idx++) { suffix_i[idx] = mySpace[i + idx]; }
 
@@ -163,7 +162,6 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 1]= 1:BA
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである。
-
         mergeSort(suffixArray, suffixArray.length);
     }
         
@@ -243,6 +241,7 @@ public class Frequencer implements FrequencerInterface{
         
         // ここに比較のコードを書け 
 
+        // DONT COPY STRING JUST USE INDEX 😂
         byte[] suffix_i = new byte[mySpace.length-i];
         for(int idx = 0; idx<mySpace.length-i; idx++) { suffix_i[idx] = mySpace[i + idx]; }
 

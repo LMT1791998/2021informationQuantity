@@ -2,8 +2,6 @@ package s4.B213309;  // ここは、かならず、自分の名前に変えよ�
 import java.lang.*;
 import s4.specification.*;
 
-import java.io.*;
-
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
   public interface FrequencerInterface {     // This interface provides the design for frequency counter.
@@ -119,20 +117,9 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 1]= 1:BA
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである
-        
-        sortMerge(0, suffixArray.length);
-        /*　old method
-        for(int i = space.length - 1; i > 0; i--){
-	        for(int j = 0; j < i; j++){
-		        if(suffixCompare(suffixArray[j], suffixArray[j + 1]) > 0){
-		            int swap = suffixArray[j];
-		            suffixArray[j] = suffixArray[j + 1];
-		            suffixArray[j + 1] = swap;
-	    	    }
-	        }
-	    }
-        */
 
+        // マージソートでsuffixArrayを昇順にソート
+        sortMerge(0, suffixArray.length);
     }
 
     // suffixArryを昇順にソートする関数
@@ -159,7 +146,7 @@ public class Frequencer implements FrequencerInterface{
             suffixcomp[size - 1 - i] = suffixArray[mid + i];
         }
         if(size % 2 == 1)
-            suffixcomp[size/2] = suffixArray[mid + size / 2];
+            suffixcomp[size / 2] = suffixArray[mid + size / 2];
 
         int i = 0;  // iは前から後ろへ
         int j = size - 1;    // jは後ろから前へ
@@ -300,12 +287,35 @@ public class Frequencer implements FrequencerInterface{
         // ここにコードを記述せよ。                                                 
         //
 
-        // suffixArrayの順に見ていく
-        for (int i = 0; i < suffixArray.length; i++){
-            if(targetCompare(suffixArray[i], start, end) == 0){
-                return i;
-            }
-        }                                                                        
+        // suffixArrayにおいて最初にマッチする出るまで繰り返す。
+        int result = binarySearch(0, suffixArray.length - 1, start, end);
+        int pre_result = result;
+        // マッチするものがまだあるなら、
+        while(result != suffixArray.length){
+            pre_result = result;
+            // より前を探索する
+            result = binarySearch(0, result - 1, start, end); 
+        }
+        // マッチしなくなったとき、一つ前の結果が求める答え
+        return pre_result;
+    }
+
+    // バイナリサーチでsuffixArrayのmin~maxの範囲において、探索の「最初に」マッチしたものを返す
+    private int binarySearch(int min, int max, int start, int end){
+        int m_mid = min + (max - min) / 2;
+        int m_min = min;
+        int m_max = max;
+        while(m_min <= m_max){
+            int diff = targetCompare(suffixArray[m_mid], start, end);
+            if(diff == 0)
+                return m_mid;
+            else if(diff > 0)
+                m_max = m_mid - 1;
+            else
+                m_min = m_mid + 1;
+
+            m_mid = m_min + (m_max - m_min) / 2;
+        }
         return suffixArray.length; // suffixArray.lengthの値
     }
 
@@ -338,14 +348,18 @@ public class Frequencer implements FrequencerInterface{
         //                                                                   
         //　ここにコードを記述せよ                                           
         //
-        int target_start_index = subByteStartIndex(start, end);
-        // suffixArrayの順に見ていく
-        for (int i = target_start_index + 1; i < suffixArray.length; i++){
-            if(targetCompare(suffixArray[i], start, end) != 0){
-                return i;
-            }
-        }                                                                        
-        return suffixArray.length; // suffixArray.lengthの値      
+
+        // suffixArrayにおいて最後にマッチする出るまで繰り返す。
+        int result = binarySearch(0, suffixArray.length - 1, start, end);
+        int pre_result = result;
+        // マッチするものがまだあるなら
+        while(result != suffixArray.length){
+            pre_result = result;
+            // より後ろを探索する
+            result = binarySearch(result + 1, suffixArray.length - 1, start, end);
+        }
+        // マッチしたものがある場合、目的の文字列の"出現しなくなる"場所なので１を加える
+        return pre_result != suffixArray.length ? pre_result + 1 : suffixArray.length; 
     }
 
 
@@ -400,12 +414,13 @@ public class Frequencer implements FrequencerInterface{
             // ****  Please write code to check subByteStartIndex, and subByteEndIndex
             //
 
-
+            /*
             // BenchMarkTest
             // 実行方法
+            // import java.io.*; を追加後、下記コマンドを実行
             // $ make Fre
             // $ awk 1 ../data/rand_100k.txt ../data/rand_1k.txt | make runFre
-            /*
+            ///*
             if (System.in.available() != 0) {
                 InputStreamReader isr = new InputStreamReader(System.in, "UTF-8");
                 BufferedReader br = new BufferedReader(isr);
@@ -423,7 +438,7 @@ public class Frequencer implements FrequencerInterface{
 
                 System.out.println((end - start)  + "ms");
             }
-            */
+            //*/
         }
         catch(Exception e) {
             System.out.println("STOP");
