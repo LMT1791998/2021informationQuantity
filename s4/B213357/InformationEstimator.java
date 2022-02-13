@@ -76,68 +76,37 @@ public class InformationEstimator implements InformationEstimatorInterface {
         if (mySpace == null) return Double.MAX_VALUE;
         else if (mySpace.length == 0) return Double.MAX_VALUE;
 
-        boolean [] partition = new boolean[myTarget.length+1];
-        int np = 1 << (myTarget.length-1); // np    = number of partition
-        double value = Double.MAX_VALUE;   // value = mininimum of each "value1".
-
-        double [][] IQEstimation = new double[myTarget.length+1][myTarget.length+1];
-        for (int i = 0; i < IQEstimation.length; i++) {
-            for (int j = 0; j < IQEstimation.length; j++) {
-                IQEstimation[i][j] = -1;
-            }
-        }
+        myFrequencer.setTarget(myTarget);
 
 	    if(debugMode) { showVariables(); }
-        if(debugMode) { System.out.printf("np=%d length=%d ", np, +myTarget.length); }
 
-        for(int p=0; p < np; p++) { // There are 2^(n-1) kinds of partitions.
+        // 参考: B191868様の実装
+        // https://github.com/tten5/2021informationQuantity/blob/main/s4/B191868/InformationEstimator.java
+        double[] suffixEstimation = new double[myTarget.length];
+        for (int i = 0; i < suffixEstimation.length; i++) {
 
-            // binary representation of p forms partition.
-            // for partition {"ab" "cde" "fg"}
-            // a b c d e f g   : myTarget
-            // T F T F F T F T : partition:
-            partition[0] = true; // I know that this is not needed, but..
-            for(int i=0; i<myTarget.length -1;i++) {
-                partition[i+1] = (0 !=((1<<i) & p));
+            // 1文字の情報量
+            if (i == 0) {
+                suffixEstimation[0] = iq(myFrequencer.subByteFrequency(0, 1));
+                continue;
             }
-            partition[myTarget.length] = true;
 
-            // Compute Information Quantity for the partition, in "value1"
-            // value1 = IQ(#"ab")+IQ(#"cde")+IQ(#"fg") for the above example
-            double value1 = (double) 0.0;
-            int end   = 0;
-            int start = end;
-            while(start < myTarget.length) {
-                // System.out.write(myTarget[end]);
-                end++;
-                while(partition[end] == false) {
-                    // System.out.write(myTarget[end]);
-                    end++;
-                }
+            // 全ての文字列の情報量
+            double min = iq(myFrequencer.subByteFrequency(0, i + 1));
 
-                // System.out.print("("+start+","+end+")");
-                double IQ;
-                if (IQEstimation[start][end] != -1) {
-                    IQ = IQEstimation[start][end];
+            // 区切り文字の情報量
+            for (int j = 0; j < i; j++) {
+                double value = suffixEstimation[j] + iq(myFrequencer.subByteFrequency(j + 1, i + 1));
 
-                } else {
-                    myFrequencer.setTarget(subBytes(myTarget, start, end));
-                    IQ = iq(myFrequencer.frequency());
-                    IQEstimation[start][end] = IQ;
-                }
-                
-                value1 = value1 + IQ;
-                start = end;
+                if (min > value) min = value;
             }
-            // System.out.println(" "+ value1);
 
-            // Get the minimal value in "value"
-            if(value1 < value) value = value1;
+            suffixEstimation[i] = min;
         }
 
-	    if(debugMode) { System.out.printf("%10.5f\n", value); }
+	    if(debugMode) { System.out.printf("%10.5f\n", suffixEstimation[suffixEstimation.length - 1]); }
 
-        return value;
+        return suffixEstimation[suffixEstimation.length - 1];
     }
 
 

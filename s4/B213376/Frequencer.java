@@ -65,9 +65,9 @@ public class Frequencer implements FrequencerInterface{
         // if suffix_i > suffix_j, it returns 1   
         // if suffix_i < suffix_j, it returns -1  
         // if suffix_i = suffix_j, it returns 0;   
-        
 
-        // DONT COPY STRING JUST USE INDEX
+
+        /* old compare (slow)
         byte[] suffix_i = new byte[mySpace.length-i];
         for(int idx = 0; idx<mySpace.length-i; idx++) { suffix_i[idx] = mySpace[i + idx]; }
 
@@ -96,7 +96,31 @@ public class Frequencer implements FrequencerInterface{
             }
         }
 
-        return result;  
+        return result;
+        */  
+
+        // After reading the implementation of B191865, I have learnt that
+        // looping on mySpace and myTarget is more efficient than doing substring
+
+        int minLength = Math.min(mySpace.length-i,mySpace.length-j);
+
+        for(int k=0; k<minLength; k++){
+            if(mySpace[i+k]>mySpace[j+k]){
+                return 1;
+            }
+            else if(mySpace[i+k]<mySpace[j+k]){
+                return -1;
+            }
+        }
+        
+        if(i>j){
+            return -1;
+        }
+        else if(i<j){
+            return 1;
+        }
+
+        return 0;
     }
 
     public void merge(int[] a, int[] l, int[] r, int left, int right) {
@@ -241,7 +265,7 @@ public class Frequencer implements FrequencerInterface{
         
         // ここに比較のコードを書け 
 
-        // DONT COPY STRING JUST USE INDEX 😂
+        /* old compare (slow)
         byte[] suffix_i = new byte[mySpace.length-i];
         for(int idx = 0; idx<mySpace.length-i; idx++) { suffix_i[idx] = mySpace[i + idx]; }
 
@@ -265,6 +289,27 @@ public class Frequencer implements FrequencerInterface{
             result=-1;
         }
         return result;
+        */
+
+        // After reading the implementation of B191865, I have learnt that
+        // looping on mySpace and myTarget is more efficient than doing substring
+
+        int minLength = Math.min(mySpace.length-i,k-j);
+
+        for(int l=0; l<minLength; l++){
+            if(mySpace[i+l]>myTarget[j+l]){
+                return 1;
+            }
+            else if(mySpace[i+l]<myTarget[j+l]){
+                return -1;
+            }
+        }
+        
+        if(k-j>mySpace.length-i){
+            return -1;
+        }
+
+        return 0;
     }
     
     private int subByteStartIndex(int start, int end) {
