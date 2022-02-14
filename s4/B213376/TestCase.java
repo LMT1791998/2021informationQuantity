@@ -33,12 +33,10 @@ public class TestCase {
     static boolean success = true;
    
     public static void main(String[] args) {
-	int c;
-    	c = 0;
+
 	try {
 	    FrequencerInterface  myObject;
 	    int freq;
-		c=0;
 	    System.out.println("checking Frequencer");
 	    // This is smoke test
 	    myObject = new Frequencer();
@@ -47,120 +45,112 @@ public class TestCase {
 	    freq = myObject.frequency();
 	    assert freq == 4: "Hi Ho Hi Ho, H: " + freq;
 
-        // Frequencer Check
+        // Frequency() Check
+		myObject = new Frequencer();
+        freq = myObject.frequency();
+        assert freq == -1 : "Not returning -1 when Target is not set and Space is not set";
+        
+		myObject = new Frequencer();
+		myObject.setTarget("".getBytes());
+        freq = myObject.frequency();
+        assert freq == -1 : "Not returning -1 when Target's length is zero and Space is not set";
+
         myObject = new Frequencer();
         myObject.setSpace("Hi Ho Hi Ho".getBytes());
         freq = myObject.frequency();
-        assert freq == -1 : "Not returning -1 when no Target is set or Target's length is zero";
+        assert freq == -1 : "Not returning -1 when Target is not set";
         
+		myObject = new Frequencer();
+        myObject.setSpace("Hi Ho Hi Ho".getBytes());
+		myObject.setTarget("".getBytes());
+        freq = myObject.frequency();
+        assert freq == -1 : "Not returning -1 when Target's length is zero";
+
         myObject = new Frequencer();
         myObject.setTarget("Ho".getBytes());
         freq = myObject.frequency();
-        assert freq == 0 : "Not returning zero when no Space is set or Space's length is zero";
+        assert freq == 0 : "Not returning 0 when Space is not set and Target is not empty";
         
+		myObject = new Frequencer();
+        myObject.setSpace("".getBytes());
+		myObject.setTarget("Ho".getBytes());
+        freq = myObject.frequency();
+        assert freq == 0 : "Not returning 0 when Space is empty";
+
         myObject = new Frequencer();
         myObject.setSpace("Hi Ho Hi Ho".getBytes());
         myObject.setTarget("Hi Ho Hi Hoo".getBytes());
         freq = myObject.frequency();
-        assert freq == 0 : "Not returning zero when Target's length is longer than Space'length";
+        assert freq == 0 : "Not returning 0 when Target's length is longer than Space's length";
         
         myObject = new Frequencer();
         myObject.setSpace("Hi Ho Hi Ho".getBytes());
         myObject.setTarget("Hoo".getBytes());
         freq = myObject.frequency();
-        assert freq == 0 : "Not returning zero when Target not found";
+        assert freq == 0 : "Not returning 0 when Target not found";
+		
+		myObject = new Frequencer();
+        myObject.setSpace("Hi Ho Hi Ho".getBytes());
+        myObject.setTarget("ho".getBytes());
+        freq = myObject.frequency();
+        assert freq == 0 : "Not returning 0 when Target not found";
 
         myObject = new Frequencer();
         myObject.setSpace("Hi Ho Hi Ho".getBytes());
         myObject.setTarget("Hi Ho".getBytes());
         freq = myObject.frequency();
-        assert freq == 2 : "Frequency for \"Hi Ho\" in \"Hi Ho Hi Ho\" should be 2.0. But it returns" + freq;
+        assert freq == 2 : "Frequency for Hi Ho in Hi Ho Hi Ho should return 2.0. But it returns" + freq;
+        
+		myObject = new Frequencer();
+        myObject.setSpace("Hi Ho Hi Ho".getBytes());
+        myObject.setTarget("H".getBytes());
+        freq = myObject.frequency();
+        assert freq == 4 : "Frequency for H in Hi Ho Hi Ho should return 4.0. But it returns" + freq;
         
         myObject = new Frequencer();
         myObject.setSpace("jr jx jr jxrjx".getBytes());
         myObject.setTarget("jx".getBytes());
         freq = myObject.frequency();
-        assert freq == 3 : "Frequency for \"jx\" in \"jr jx jr jxrjx\" should be 3.0. But it returns" + freq;
+        assert freq == 3 : "Frequency for jx in jr jx jr jxrjx should return 3.0. But it returns" + freq;
         
-        myObject = new Frequencer();
-	    freq = myObject.frequency();
-	    if(-1 != freq) { System.out.println("frequency() should return -1, when target is not set, but returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setTarget("".getBytes());
-	    freq = myObject.frequency();
-	    if(-1 != freq) { System.out.println("frequency() should return -1, when target is empty, but return "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAA".getBytes());
-	    if(-1 != freq) { System.out.println("frequency() for AAA should return -1, when target is  not set. But it returns  "+freq); c++; }	
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAA".getBytes());
-	    myObject.setTarget("".getBytes());
-	    freq = myObject.frequency();
-	    if(-1 != freq) { System.out.println("frequency() for AAA should return -1, when taget empty string. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setTarget("A".getBytes());
-	    freq = myObject.frequency();	   
- 	    if(0 != freq) { System.out.println("frequency() for not set, should return 0, when taget is not empty. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("".getBytes());
-	    myObject.setTarget("A".getBytes());
-	    freq = myObject.frequency();	   
- 	    if(0 != freq) { System.out.println("frequency() for empty space, should return 0, when taget is not empty. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
+		myObject = new Frequencer();
 	    myObject.setSpace("AAA".getBytes());
 	    myObject.setTarget("A".getBytes());
 	    freq = myObject.frequency();
-	    if(3 != freq) { System.out.println("frequency() for AAA, should return 3, when taget is A. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
+		assert freq == 3 : "Frequency for A in AAA should return 3. But it returns"+freq;
+	    
+		myObject = new Frequencer();
 	    myObject.setSpace("AAA".getBytes());
 	    myObject.setTarget("AA".getBytes());
 	    freq = myObject.frequency();
-	    if(2 != freq) { System.out.println("frequency() for AAA, should return 2, when taget is AA. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
+	    assert freq == 2 : "Frequency for AA in AAA should return 2. But it returns"+freq;
+	    
+		myObject = new Frequencer();
 	    myObject.setSpace("AAA".getBytes());
 	    myObject.setTarget("AAA".getBytes());
-	    freq = myObject.frequency();
-	    if(1 != freq) { System.out.println("frequency() for AAA, should return 1, when taget is AAA. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAA".getBytes());
-	    myObject.setTarget("AAAA".getBytes());
-	    freq = myObject.frequency();
-	    if(0 != freq) { System.out.println("frequency() for AAA, should return 0, when taget is AAAA. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
-	    myObject.setTarget("H".getBytes());
-	    freq = myObject.frequency();
-	    if(4 != freq) {System.out.println("frequency() for Hi_Ho_Hi_Ho, should return 4, when taget is H. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("Hi Ho Hi Ho".getBytes());
-	    myObject.setTarget("Ho".getBytes());
-	    freq = myObject.frequency();
-	    if(2 != freq) {System.out.println("frequency() for Hi_Ho_Hi_Ho, should return 2, when taget is Ho. But it returns "+freq); c++; }
-	    /* please note subByteFreqency(0,0) is considered illeagal specification, and you should not include this case */
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAAB".getBytes());
-	    myObject.setTarget("AAAAB".getBytes());
+	    freq = myObject.frequency();  
+		assert freq == 1 : "Frequency for AAA in AAA should return 1. But it returns"+freq;
+	    
+		// subByteFreqency(0,0) is illegal 
+		// subByteFrequency() Check
+		myObject = new Frequencer();
+	    myObject.setSpace("ABACADAE".getBytes());
+	    myObject.setTarget("AABBCCDD".getBytes());
 	    freq = myObject.subByteFrequency(0,1);
-	    if(3 != freq) { System.out.println("SubBytefrequency() for AAAB, should return 3, when taget is AAAAB[0:1]. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAAB".getBytes());
-	    myObject.setTarget("AAAAB".getBytes());
-	    freq = myObject.subByteFrequency(1,2);
-	    if(3 != freq) { System.out.println("SubBytefrequency() for AAAB, should return 3, when taget is AAAAB[1:2]. But it returns "+freq); c++; }
-	    if(2 == freq) { System.out.println("You might be confused by the intentional error in sample code.");   }
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAAB".getBytes());
-	    myObject.setTarget("AAAAB".getBytes());
+	    assert freq == 4 : "SubBytefrequency for ABACADAE should return 4 when Target is AABBCCDD[0:1]. But it returns "+freq;
+	    
+		myObject = new Frequencer();
+	    myObject.setSpace("ABACADAE".getBytes());
+	    myObject.setTarget("AABBCCDD".getBytes());
+	    freq = myObject.subByteFrequency(0,8);
+	    assert freq == 0 : "SubBytefrequency for ABACADAE should return 0 when Target is AABBCCDD[0:8]. But it returns "+freq;
+	    
+		myObject = new Frequencer();
+	    myObject.setSpace("ABACADAE".getBytes());
+	    myObject.setTarget("AABBCCDD".getBytes());
 	    freq = myObject.subByteFrequency(1,3);
-	    if(2 != freq) { System.out.println("SubBytefrequency() for AAAB, should return 2, when taget is AAAAB[1:3]. But it returns "+freq); c++; }
-	    myObject = new Frequencer();
-	    myObject.setSpace("AAAB".getBytes());
-	    myObject.setTarget("AAAAB".getBytes());
-	    freq = myObject.subByteFrequency(4,5);
-	    if(1 != freq) { 
-		System.out.println("SubBytefrequency() for AAAB, should return 1, when taget is AAAAB[4:5]. But it returns "+freq); c++;  
-	    }
-
+	    assert freq == 1 : "SubBytefrequency for ABACADAE should return 1 when Target is AABBCCDD[1:3]. But it returns "+freq;
+	    
         System.out.println("Frequencer Test Done");
 	}
 	catch(Exception e) {
@@ -194,7 +184,9 @@ public class TestCase {
 	    System.out.println("Exception occurred in InformationEstimator Object");
 	    success = false;
 	}
-        if(success) { System.out.println("TestCase OK"); } 
-    }
+    
+	if(success) { System.out.println("TestCase OK"); } 
+    
+	}
 }	    
 	    

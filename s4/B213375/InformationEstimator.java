@@ -57,8 +57,8 @@ public class InformationEstimator implements InformationEstimatorInterface{
         // 0.0 : when no Target;
         // Double.MAX_VALUE : when space not set (technically infinite)
         // WARN: Undefined behaviour if true value is finite but larger than Double.MAX_VALUE.
-        if(myTarget.length==0) return 0;
-        if(mySpace.length==0) return Double.MAX_VALUE;
+        if(mySpace==null||mySpace.length==0) return Double.MAX_VALUE;
+        if(myTarget==null||myTarget.length==0) return 0;
 
         /*  This implementation breaks down the problem into multiple calculations,
             out of which the minimum value out of the candidates is the true result.
@@ -169,6 +169,31 @@ public class InformationEstimator implements InformationEstimatorInterface{
         InformationEstimator.debugMode = true;
         InformationEstimator.fullCalculations = false;
         myObject=new InformationEstimator();
+
+        //Check behavior for null objects and 0length objects:
+        System.out.println("Testing null SPACEs / TARGETs:");
+        // empty SPACE
+        System.out.println("****(from SPACE==null):");
+        System.out.printf("%10.5f", myObject.estimation());
+        System.out.printf(" (expected %10.5f)\n", Double.MAX_VALUE);
+        System.out.println("****(from SPACE==[]):");
+        myObject.setSpace("".getBytes());
+        System.out.printf("%10.5f", myObject.estimation());
+        System.out.printf(" (expected %10.5f)\n", Double.MAX_VALUE);
+        myObject.setSpace("notnull".getBytes());
+        // empty TARGET
+        System.out.println("****(from TARGET==null):");
+        System.out.printf("%10.5f", myObject.estimation());
+        System.out.printf(" (expected %10.5f)\n", 0.0);
+        System.out.println("****(from TARGET==[]):");
+        myObject.setTarget("".getBytes());
+        System.out.printf("%10.5f", myObject.estimation());
+        System.out.printf(" (expected %10.5f)\n", 0.0);
+        myObject.setTarget("n".getBytes());
+        // non-empty
+        System.out.println("****(from WELL DEFINED):");
+        System.out.printf("%10.5f", myObject.estimation());
+        System.out.printf(" (expected %10.5f)\n", -Math.log10(2.0/7)/Math.log10(2));
 
         //////////////////////////////////////////////////
         myObject.setSpace("3210321001230123".getBytes());

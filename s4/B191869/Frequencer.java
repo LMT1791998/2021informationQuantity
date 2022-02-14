@@ -1,30 +1,35 @@
-package s4.B191869; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
+// クラスやインターフェイスをグループ化するため, s4.B191869package宣言
+package s4.B191869; 
+// Javaの基本的な機能がまとめられたパッケージをインポート
 import java.lang.*;
-import s4.specification.*;
-
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
   public interface FrequencerInterface {     // This interface provides the design for frequency counter.
   void setTarget(byte  target[]); // set the data to search.
   void setSpace(byte  space[]);  // set the data to be searched target from.
   int frequency(); //It return -1, when TARGET is not set or TARGET's length is zero
-  //Otherwise, it return 0, when SPACE is not set or SPACE's length is zero
-  //Otherwise, get the frequency of TAGET in SPACE
+  // Otherwise, it return 0, when SPACE is not set or SPACE's length is zero
+  // Otherwise, get the frequency of TARGET in SPACE
   int subByteFrequency(int start, int end);
-  // get the frequency of subByte of taget, i.e target[start], taget[start+1], ... , target[end-1].
+  // get the frequency of subByte of target, i.e target[start], target[start+1], ... , target[end-1].
   // For the incorrect value of START or END, the behavior is undefined.
   }
 */
+import s4.specification.*;
 
+/*
+    Content logic code is referenced from github account https://github.com/tten5/2021informationQuantity
+*/
+
+/*
+    FrequencerInterfaceインターフェイスをを継承してFrequencerクラスを定義し、実証する
+*/
 public class Frequencer implements FrequencerInterface {
-    // Code to start with: This code is not working, but good start point to work.
-    byte [] myTarget;
-    byte [] mySpace;
-    boolean targetReady = false;
-    boolean spaceReady = false;
-
-    int [] suffixArray; // Suffix Arrayの実装に使うデータの型をint []とせよ。
-
+    byte [] myTarget; // myTargetを格納するため、データ型Byte配列を宣言
+    byte [] mySpace; // mySpaceを格納するため、データ型Byte配列を宣言
+    boolean targetReady = false; // target set状態を初期化する
+    boolean spaceReady = false; // space set状態を初期化する
+    int [] suffixArray; // Suffix Arrayの実装に使うデータの型をint[]
 
     // The variable, "suffixArray" is the sorted array of all suffixes of mySpace.                                    
     // Each suffix is expressed by a integer, which is the starting position in mySpace. 
@@ -36,6 +41,7 @@ public class Frequencer implements FrequencerInterface {
     // リポジトリにpushするときには、mainメッソド以外からは呼ばれないようにせよ。
     //
     private void printSuffixArray() {
+        // 比較対象SuffixArrayの要素をプリントアウトするための関数
         if (spaceReady) {
             for (int i = 0; i < mySpace.length; i++) {
                 int s = suffixArray[i];
@@ -45,13 +51,14 @@ public class Frequencer implements FrequencerInterface {
                 }
                 System.out.write('\n');
             }
-            System.out.println("i = 0, j = 1: " + suffixCompare(0, 1));
-            System.out.println("i = 1, j = 0: " + suffixCompare(1, 0));
-            System.out.println("i = 0, j = 0: " + suffixCompare(0, 0));
         }
     }
 
     private int suffixCompare(int i, int j) {
+        /* Input: 
+            @Param{int i}: suffix_iのサイズの計算に使うインデックス
+            @Param{int j}: suffix_jのサイズの計算に使うインデックス
+        */
         // suffixCompareはソートのための比較メソッドである。
         // 次のように定義せよ。
         //
@@ -71,8 +78,8 @@ public class Frequencer implements FrequencerInterface {
         // if suffix_i = suffix_j, it returns 0;   
 
         // ここにコードを記述せよ 
-        //        
-                      
+        //                     
+
         int len_i = mySpace.length - i; // length of suffix_i
         int len_j = mySpace.length - j; // length of suffix_j
         int index = 0; // index to check each character in suffix_i and suffix_j
@@ -84,6 +91,7 @@ public class Frequencer implements FrequencerInterface {
                 return -1;
             index++;
         }
+
         if (len_i > len_j)
             return 1;
         if (len_i < len_j)
@@ -91,9 +99,18 @@ public class Frequencer implements FrequencerInterface {
         return 0;
     }
 
-    public void setSpace(byte [] space) {
-        // suffixArrayの前処理は、setSpaceで定義せよ。
+    /*
+        setSpace == nullまたはsetSpace.length < 1の場合
+        setSpaceを格納するのができなかったか、setSpaceが空であるため、spaceReady = falseになる。いわゆる、比較処理を実行できない
+        その他の場合はspaceReady = true。いわゆる、比較処理を実行できる
+    */
+    public void setSpace(byte [] space) { 
+        /* Input: 
+            @Param{byte [] space}: 比較要素配列
+        */
+        // suffixArrayの前処理は、setSpaceで定義。
         mySpace = space; 
+        // mySpaceの値を”null”いわゆる要素のないmySpace配列の時、mySpaceを格納するのができなかったため、比較処理を実行しない
         if (mySpace == null || mySpace.length < 1) {
             spaceReady = false;
             return;
@@ -111,7 +128,7 @@ public class Frequencer implements FrequencerInterface {
         // もし、mySpace が"ABC"ならば、
         // suffixArray = { 0, 1, 2} となること求められる。
         // このとき、printSuffixArrayを実行すると
-        // suffixArray[ 0]= 0:ABC
+             // suffixArray[ 0]= 0:ABC
         // suffixArray[ 1]= 1:BC
         // suffixArray[ 2]= 2:C
         // のようになるべきである。
@@ -122,30 +139,60 @@ public class Frequencer implements FrequencerInterface {
         // suffixArray[ 1]= 1:BA
         // suffixArray[ 2]= 0:CBA
         // のようになるべきである。
+        // use merge_sort to sort suffixArray  
         merge_sort(suffixArray, 0, space.length - 1);
     }
 
-    // merge()
     private void merge(int arr[], int l, int m, int r) {
-        // Find sizes of two subarrays to be merged
-        int n1 = m - l + 1;
-        int n2 = r - m;
+        /* Input: 
+            @Param{int arr[]}: ソートされたサブ配列 
+            @Param{int l}: 左側のファーストインデックス
+            @Param{int m}: 中点インデックス
+            @Param{int r}: 右側のラストインデックス
+        */
 
-        /* Create temp arrays */
-        int L[] = new int[n1];
-        int R[] = new int[n2];
+        /*
+            サブ配列のサイズを宣言する
+            左側のサブ配列のサイズは最初のインデックスから中央のインデックスまでの長さに等しい。
+            最初のインデックスはゼロであるため、左側のサブ配列のサイズに1を追加する必要がある。
+            右側のサブ配列のサイズは中央のインデックスから最後のインデックスまでの長さに等しい。
+        */
+        int n1 = m - l + 1; // 左側のサブ配列のサイズ
+        int n2 = r - m; // 右側のサブ配列のサイズ
 
-        /* Copy data to temp arrays */
+        /* 
+            マージするため、一時的のデータ型をint L[], R[]を生成する
+        */
+        int L[] = new int[n1]; // 左側のサブ配列
+        int R[] = new int[n2]; // 左側のサブ配列
+
+        /* 
+            データを一時配列にコピーする
+            各配列の長さが指定され、各要素をそれぞれ新しい配列に保存する
+        */
         for (int i = 0; i < n1; ++i)
             L[i] = arr[l + i];
+
         for (int j = 0; j < n2; ++j)
             R[j] = arr[m + 1 + j];
 
-        /* Merge the temp arrays and store value back to original array*/
-        int i = 0, j = 0; // i is for array L, j is for array R
-        int k = l; // k is for merged array i.e the original array
+        /* 
+            一時配列をマージし、値を元の配列に格納する
+        */
+        int i = 0; // 比較するため、左側配列のインデックス
+        int j = 0; // 比較するため、右側配列のインデックス
+        int k = l; // マージされた配列のインデックス
+
+        /*
+            2つのサブ配列の各要素を比較する
+            これら2つのサブ配列のうちのどちらか1つの最後のインデックスと比較すると終了します。
+            suffixCompareを使用し、比較する
+            suffixCompare(L[i], R[j]) == -1またはsuffixCompare(L[i], R[j]) == 0であれば、その時点の元配列の要素は左側配列L[]の要素を同一である
+            その他の場合、その時点の元配列の要素は右側配列R[]の要素を同一である
+            また左側配列L[]に残りの要素があれば、残り全部元の配列を保存する
+            そして、右側配列R[]に残りの要素があれば、残り全部元の配列を保存する
+        */
         while (i < n1 && j < n2) {
-            // use suffixCompare to compare the corresponding suffix
             if (suffixCompare(L[i], R[j]) == -1 || suffixCompare(L[i], R[j]) == 0) {
                 arr[k] = L[i];
                 i++;
@@ -156,14 +203,14 @@ public class Frequencer implements FrequencerInterface {
             k++;
         }
 
-        /* Copy remaining elements of L[] if any */
+        // 側配列L[]に残りの要素があれば、残り全部元の配列を保存する
         while (i < n1) {
             arr[k] = L[i];
             i++;
             k++;
         }
 
-        /* Copy remaining elements of R[] if any */
+        // 右側配列R[]に残りの要素があれば、残り全部元の配列を保存する
         while (j < n2) {
             arr[k] = R[j];
             j++;
@@ -171,10 +218,16 @@ public class Frequencer implements FrequencerInterface {
         }
     }
 
-    // mergeのsort()
+    // merge_sort()
     private void merge_sort(int arr[], int l, int r) {
+        /* Input: 
+            @Param{int arr[]}: ソートされたサブ配列 
+            @Param{int l}: 左側のファーストインデックス
+            @Param{int r}: 右側のラストインデックス
+        */
+
         if (l < r) {
-            // Find the middle point
+            // ソートするに使う中点のインデックスを計算する
             int m = (l + r) / 2;
 
             // Sort first and second halves
@@ -184,26 +237,39 @@ public class Frequencer implements FrequencerInterface {
             // Merge the sorted halves
             merge(arr, l, m, r);
         }
-    }    
+    }
     // ここから始まり、指定する範囲までは変更してはならないコードである。
-
-    public void setTarget(byte[] target) {
+        
+    /*
+        myTarget == nullまたはmyTarget.length < 1の場合
+        myTargetを格納するのができなかったか、myTargetが空であるため、targetReady = falseになる。いわゆる、比較処理を実行できない
+        その他の場合はtargetReady = true。いわゆる、比較処理を実行できる
+    */
+    public void setTarget(byte [] target) {
+         /* Input: 
+            @Param{byte [] target}: 比較対象配列
+        */
         myTarget = target; 
 
         if (myTarget == null || myTarget.length < 1) {
-            targetReady = false;
+            targetReady = false; 
         } else {
             targetReady = true;            
         }
     }
 
+    /*
+        targetに対して、spaceに応じて、各要素の出現頻度を返す
+        もしtargetReady = falseの場合、−１を返す。いわゆる比較要素がない
+        もしspaceReady = falseの場合、０を返す。いわゆる比較対象がない
+    */
     public int frequency() {
         if (!targetReady) {
             return -1;
         }
         if (!spaceReady) {
             return 0;
-        }
+        }        
         return subByteFrequency(0, myTarget.length);
     }
 
@@ -228,8 +294,8 @@ public class Frequencer implements FrequencerInterface {
         // The following the counting method using suffix array.
         // 演習の内容は、適切なsubByteStartIndexとsubByteEndIndexを定義することである。
         int first = subByteStartIndex(start, end);
-        int last1 = subByteEndIndex(start, end);
-        return last1 - first;
+        int last = subByteEndIndex(start, end);
+        return last - first;
     }
     // 変更してはいけないコードはここまで。
 
@@ -250,7 +316,7 @@ public class Frequencer implements FrequencerInterface {
         // if first part of suffix_i is equal to target_j_k, it returns 0;
         //
         // Example of search 
-        // suffix target
+         // suffix target
         // "o" > "i"
         // "o" < "z"
         // "o" = "o"
@@ -265,7 +331,7 @@ public class Frequencer implements FrequencerInterface {
         // if suffix_i is "Ho Hi Ho", and target_j_k is "Ho",
         // targetCompare should return 0;
         // if suffix_i is "Ho Hi Ho", and suffix_j is "Ho",
-        // suffixCompare should return -1.
+        // suffixCompare should return 1.
         //
         // ここに比較のコードを書け 
         //
@@ -395,7 +461,8 @@ public class Frequencer implements FrequencerInterface {
         int result = lastIndexSearch(0, suffixArray.length - 1, start, end);
         if (result == -1)
             return result;
-        return result + 1;
+        // because the finished position is the next position of the last one 
+        return result + 1; 
     }
 
     // Suffix Arrayを使ったプログラムのホワイトテストは、
@@ -434,7 +501,7 @@ public class Frequencer implements FrequencerInterface {
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("CBA".getBytes());
             frequencerObject.printSuffixArray();
-            frequencerObject.setTarget("A".getBytes());
+            frequencerObject.setTarget("CB".getBytes());
             // **** Print out subByteStartIndex, and subByteEndIndex
             int sub_start2 = frequencerObject.subByteStartIndex(0, frequencerObject.myTarget.length);
             System.out.print("subByteStartIndex = " + sub_start2 + " ");
@@ -442,10 +509,10 @@ public class Frequencer implements FrequencerInterface {
             System.out.print("subByteEndIndex = " + sub_end2 + " ");
             int result2 = frequencerObject.frequency();
             System.out.print("Freq = " + result2 + " ");
-            if (1 == result2) {
-                System.out.println("OK");
+            if (1 == result2) { 
+                System.out.println("OK"); 
             } else {
-                System.out.println("WRONG");
+                System.out.println("WRONG"); 
             }
 
             // Test case 3: mySpaceの文字は、"HHH"
@@ -460,13 +527,13 @@ public class Frequencer implements FrequencerInterface {
             System.out.print("subByteEndIndex = " + sub_end3 + " ");
             int result3 = frequencerObject.frequency();
             System.out.print("Freq = " + result3 + " ");
-            if (3 == result3) {
-                System.out.println("OK");
+            if (3 == result3) { 
+                System.out.println("OK"); 
             } else {
-                System.out.println("WRONG");
+                System.out.println("WRONG"); 
             }
 
-            // Test case 3: mySpaceの文字は、"Hi Ho Hi Ho"
+            // Test case 4: mySpaceの文字は、"Hi Ho Hi Ho"
             frequencerObject = new Frequencer();
             frequencerObject.setSpace("Hi Ho Hi Ho".getBytes());
             frequencerObject.printSuffixArray();
@@ -485,9 +552,7 @@ public class Frequencer implements FrequencerInterface {
             */
 
             frequencerObject.setTarget("H".getBytes());
-            // 
             // **** Print out subByteStartIndex, and subByteEndIndex
-            // 
 
             int sub_start4 = frequencerObject.subByteStartIndex(0, frequencerObject.myTarget.length);
             System.out.print("subByteStartIndex = " + sub_start4 + " ");
@@ -495,10 +560,10 @@ public class Frequencer implements FrequencerInterface {
             System.out.print("subByteEndIndex = " + sub_end4 + " ");
             int result4 = frequencerObject.frequency();
             System.out.print("Freq = " + result4 + " ");
-            if (4 == result4) {
-                System.out.println("OK");
+            if (4 == result4) { 
+                System.out.println("OK"); 
             } else {
-                System.out.println("WRONG");
+                System.out.println("WRONG"); 
             }
         } catch (Exception e) {
             System.out.println("STOP");

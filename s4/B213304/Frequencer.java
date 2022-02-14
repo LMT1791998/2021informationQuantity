@@ -134,7 +134,10 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 1]= 1:BA
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである。
-    
+        
+	merge_sort(0, suffixArray.length - 1);
+
+    /*
 	int temp;
 	for(int x = 0; x < suffixArray.length; x++) {
             for(int y = 0; y < suffixArray.length -x -1; y++) {
@@ -146,7 +149,46 @@ public class Frequencer implements FrequencerInterface{
                     continue;
                 }
             }
-        }
+        }*/
+    }
+
+    private void merge_sort(int low, int high) {
+	int mid;
+
+    	if(low < high) {
+		mid = (low + high) / 2;
+		merge_sort(low, mid);
+		merge_sort(mid+1, high);
+		merge(low, mid, high);
+	}
+    }
+
+    private void merge(int low, int mid, int high) {
+	int[] tempArray = new int[suffixArray.length];
+
+	for(int i = low; i <= high; i++) {
+		tempArray[i] = suffixArray[i];
+	}
+
+	int tempLeft = low;
+	int tempRight = mid + 1;
+	int now = low;
+	
+	int temp;
+	while(tempLeft <= mid && tempRight <= high) {
+		if(suffixCompare(tempArray[tempRight], tempArray[tempLeft]) == 1) {
+			suffixArray[now] = tempArray[tempLeft];
+			tempLeft++;
+		} else {
+			suffixArray[now] = tempArray[tempRight];
+			tempRight++;
+		}
+		now++;
+	}
+	int remain = mid - tempLeft;
+	for(int i = 0; i <= remain; i++) {
+		suffixArray[now + i] = tempArray[tempLeft + i];
+	}
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。

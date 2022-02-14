@@ -80,7 +80,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
             subIQ[n] = f(0, n+1); // first take the iq(0, n+1)
             for(int i = 0; i < n; i++){
                 // compare iq(0, n+1) with all (subIQ[..] + iq(..)) to find the min
-                val=subIQ[i] + f(i+1,n+1);
+                double val=subIQ[i] + f(i+1,n+1);
                 if(subIQ[n] > val)subIQ[n] = val;
             }
         }
